@@ -1,0 +1,65 @@
+! ============================================================
+!  SW-2  |  Switch de la DMZ (servidores)
+!  Plataforma: Cisco vIOS-L2
+! ============================================================
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname SW-2
+!
+! enable secret: omitido
+!
+no ip domain-lookup
+!
+banner motd ^C Acceso solo autorizado ^C
+!
+! ---------- Uplink hacia FortiGate (Port3) ----------
+interface GigabitEthernet0/0
+ description UPLINK-FORTIGATE-PORT3
+ switchport mode access
+ switchport nonegotiate
+ negotiation auto
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+!
+! ---------- Servidores ----------
+interface GigabitEthernet0/1
+ description WEB-SERVER-CAJA
+ switchport mode access
+ switchport nonegotiate
+ negotiation auto
+ switchport port-security
+ switchport port-security mac-address sticky
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+!
+interface GigabitEthernet0/2
+ description DB-SERVER
+ switchport mode access
+ switchport nonegotiate
+ negotiation auto
+ switchport port-security
+ switchport port-security mac-address sticky
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+!
+interface GigabitEthernet0/3
+ description WEB-SERVER-INVENTARIO
+ switchport mode access
+ switchport nonegotiate
+ negotiation auto
+ switchport port-security
+ switchport port-security mac-address sticky
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+!
+! ---------- Puertos sin usar ----------
+interface range GigabitEthernet1/0 - 3
+ shutdown
+!
+interface range GigabitEthernet2/0 - 3, GigabitEthernet3/0 - 3
+ shutdown
+!
+end

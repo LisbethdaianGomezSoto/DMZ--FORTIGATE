@@ -1,0 +1,53 @@
+! SW-1 - Switch de usuarios (VLAN 10 y 20)
+! Pegar en la consola en modo privilegiado
+enable
+configure terminal
+hostname SW-1
+no ip domain-lookup
+service password-encryption
+banner motd # Acceso solo autorizado #
+!
+vlan 10
+ name USUARIOS-10
+vlan 20
+ name USUARIOS-20
+!
+ip dhcp snooping
+ip dhcp snooping vlan 10,20
+no ip dhcp snooping information option
+!
+interface g0/0
+ description TRUNK-FORTIGATE-PORT2
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+ switchport nonegotiate
+ ip dhcp snooping trust
+!
+interface g0/1
+ description WS0701-1-VLAN10
+ switchport mode access
+ switchport access vlan 10
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ ip dhcp snooping limit rate 15
+!
+interface g0/2
+ description PC2-VLAN20
+ switchport mode access
+ switchport access vlan 20
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ ip dhcp snooping limit rate 15
+ switchport port-security
+ switchport port-security maximum 1
+ switchport port-security mac-address sticky
+ switchport port-security violation shutdown
+!
+interface range g0/3, g1/0 - 3, g2/0 - 3, g3/0 - 3
+ shutdown
+!
+end
+write memory

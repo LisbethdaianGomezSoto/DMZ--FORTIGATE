@@ -1,0 +1,54 @@
+! SW-2 - Switch de la DMZ
+! Pegar en la consola en modo privilegiado
+enable
+configure terminal
+hostname SW-2
+no ip domain-lookup
+service password-encryption
+banner motd # Acceso solo autorizado #
+!
+interface g0/0
+ description UPLINK-FORTIGATE-PORT3
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface g0/1
+ description WEB-SERVER-CAJA
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ switchport port-security
+ switchport port-security maximum 1
+ switchport port-security mac-address sticky
+ switchport port-security violation shutdown
+!
+interface g0/2
+ description DB-SERVER
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ switchport port-security
+ switchport port-security maximum 1
+ switchport port-security mac-address sticky
+ switchport port-security violation shutdown
+!
+interface g0/3
+ description WEB-SERVER-INVENTARIO
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ switchport port-security
+ switchport port-security maximum 1
+ switchport port-security mac-address sticky
+ switchport port-security violation shutdown
+!
+interface range g1/0 - 3, g2/0 - 3, g3/0 - 3
+ shutdown
+!
+end
+write memory

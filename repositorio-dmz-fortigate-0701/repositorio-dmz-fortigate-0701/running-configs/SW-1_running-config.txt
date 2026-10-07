@@ -1,0 +1,69 @@
+! ============================================================
+!  SW-1  |  Switch de usuarios (VLAN 10 y VLAN 20)
+!  Plataforma: Cisco vIOS-L2
+! ============================================================
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname SW-1
+!
+! enable secret: omitido
+!
+no ip domain-lookup
+!
+ip dhcp snooping vlan 10,20
+no ip dhcp snooping information option
+ip dhcp snooping
+!
+vlan 10
+ name USUARIOS-10
+!
+vlan 20
+ name USUARIOS-20
+!
+banner motd ^C Acceso solo autorizado ^C
+!
+! ---------- Trunk hacia FortiGate (Port2) ----------
+interface GigabitEthernet0/0
+ description TRUNK-FORTIGATE-PORT2
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 10,20
+ switchport mode trunk
+ switchport nonegotiate
+ negotiation auto
+ ip dhcp snooping trust
+!
+! ---------- Equipo Windows de pruebas ----------
+interface GigabitEthernet0/1
+ description WS0701-1-VLAN10
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ negotiation auto
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+ ip dhcp snooping limit rate 15
+!
+! ---------- PC2 (VLAN 20) ----------
+interface GigabitEthernet0/2
+ description PC2-VLAN20
+ switchport access vlan 20
+ switchport mode access
+ switchport nonegotiate
+ negotiation auto
+ switchport port-security
+ switchport port-security mac-address sticky
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+ ip dhcp snooping limit rate 15
+!
+! ---------- Puertos sin usar ----------
+interface range GigabitEthernet0/3, GigabitEthernet1/0 - 3
+ shutdown
+!
+interface range GigabitEthernet2/0 - 3, GigabitEthernet3/0 - 3
+ shutdown
+!
+end

@@ -1,21 +1,56 @@
-! ============================================================
-!  SW-2  |  Switch de la DMZ (servidores)
-!  Plataforma: Cisco vIOS-L2
-! ============================================================
+SW-2#show run
+Building configuration...
+
+Current configuration : 4380 bytes
+!
+! Last configuration change at 21:02:06 UTC Tue Oct 6 2026
+!
 version 15.2
 service timestamps debug datetime msec
 service timestamps log datetime msec
 service password-encryption
+service compress-config
 !
 hostname SW-2
 !
-! enable secret: omitido
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$r8ZA$.RqAvJZ3hG3vkofCJn3Qy0
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
 !
 no ip domain-lookup
+ip cef
+no ipv6 cef
 !
-banner motd ^C Acceso solo autorizado ^C
 !
-! ---------- Uplink hacia FortiGate (Port3) ----------
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
 interface GigabitEthernet0/0
  description UPLINK-FORTIGATE-PORT3
  switchport mode access
@@ -24,14 +59,14 @@ interface GigabitEthernet0/0
  spanning-tree portfast edge
  spanning-tree bpduguard enable
 !
-! ---------- Servidores ----------
 interface GigabitEthernet0/1
  description WEB-SERVER-CAJA
  switchport mode access
  switchport nonegotiate
- negotiation auto
- switchport port-security
  switchport port-security mac-address sticky
+ switchport port-security mac-address sticky 0242.45be.1f00
+ switchport port-security
+ negotiation auto
  spanning-tree portfast edge
  spanning-tree bpduguard enable
 !
@@ -39,9 +74,10 @@ interface GigabitEthernet0/2
  description DB-SERVER
  switchport mode access
  switchport nonegotiate
- negotiation auto
- switchport port-security
  switchport port-security mac-address sticky
+ switchport port-security mac-address sticky 0242.9f37.ce00
+ switchport port-security
+ negotiation auto
  spanning-tree portfast edge
  spanning-tree bpduguard enable
 !
@@ -49,17 +85,120 @@ interface GigabitEthernet0/3
  description WEB-SERVER-INVENTARIO
  switchport mode access
  switchport nonegotiate
- negotiation auto
- switchport port-security
  switchport port-security mac-address sticky
+ switchport port-security mac-address sticky 0242.368b.af00
+ switchport port-security
+ negotiation auto
  spanning-tree portfast edge
  spanning-tree bpduguard enable
 !
-! ---------- Puertos sin usar ----------
-interface range GigabitEthernet1/0 - 3
+interface GigabitEthernet1/0
  shutdown
+ negotiation auto
 !
-interface range GigabitEthernet2/0 - 3, GigabitEthernet3/0 - 3
+interface GigabitEthernet1/1
  shutdown
+ negotiation auto
+!
+interface GigabitEthernet1/2
+ shutdown
+ negotiation auto
+!
+interface GigabitEthernet1/3
+ shutdown
+ negotiation auto
+!
+interface GigabitEthernet2/0
+ shutdown
+ negotiation auto
+!
+interface GigabitEthernet2/1
+ shutdown
+ negotiation auto
+!
+interface GigabitEthernet2/2
+ shutdown
+ negotiation auto
+!
+interface GigabitEthernet2/3
+ shutdown
+ negotiation auto
+!
+interface GigabitEthernet3/0
+ shutdown
+ negotiation auto
+!
+interface GigabitEthernet3/1
+ shutdown
+ negotiation auto
+!
+interface GigabitEthernet3/2
+ shutdown
+ negotiation auto
+!
+interface GigabitEthernet3/3
+ shutdown
+ negotiation auto
+!
+ip forward-protocol nd
+!
+ip http server
+ip http secure-server
+!
+ip ssh server algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+ip ssh client algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+!
+!
+!
+!
+!
+!
+control-plane
+!
+banner exec ^C
+IOSv - Cisco Systems Confidential -
+
+
+Supplemental End User License Restrictions
+
+
+This IOSv software is provided AS-IS without warranty of any kind. Under no circumstances may this software be used separate from the Cisco Modeling Labs Software that this software was provided with, or deployed or used as part of a production environment.
+
+
+By using the software, you agree to abide by the terms and conditions of the Cisco End User License Agreement at http://www.cisco.com/go/eula. Unauthorized use or distribution of this software is expressly prohibited.
+^C
+banner incoming ^C
+IOSv - Cisco Systems Confidential -
+
+
+Supplemental End User License Restrictions
+
+
+This IOSv software is provided AS-IS without warranty of any kind. Under no circumstances may this software be used separate from the Cisco Modeling Labs Software that this software was provided with, or deployed or used as part of a production environment.
+
+
+By using the software, you agree to abide by the terms and conditions of the Cisco End User License Agreement at http://www.cisco.com/go/eula. Unauthorized use or distribution of this software is expressly prohibited.
+^C
+banner login ^C
+IOSv - Cisco Systems Confidential -
+
+
+Supplemental End User License Restrictions
+
+
+This IOSv software is provided AS-IS without warranty of any kind. Under no circumstances may this software be used separate from the Cisco Modeling Labs Software that this software was provided with, or deployed or used as part of a production environment.
+
+
+By using the software, you agree to abide by the terms and conditions of the Cisco End User License Agreement at http://www.cisco.com/go/eula. Unauthorized use or distribution of this software is expressly prohibited.
+^C
+banner motd ^C Lisbeth 2025-0701 ^C
+!
+line con 0
+line aux 0
+line vty 0 4
+ login
+!
 !
 end
+
+SW-2#
